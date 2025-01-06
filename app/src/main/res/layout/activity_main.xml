@@ -34,9 +34,26 @@
         android:contentDescription="Input box for adding a new task"
         app:layout_constraintTop_toBottomOf="@id/titleText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/addButton"
+        app:layout_constraintEnd_toStartOf="@id/inputPrice"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp" />
+
+    <!-- Input Field for Price -->
+    <EditText
+        android:id="@+id/inputPrice"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:hint="Price"
+        android:inputType="numberDecimal"
+        android:padding="12dp"
+        android:background="@android:drawable/edit_text"
+        android:importantForAccessibility="yes"
+        android:contentDescription="Input box for adding the price of an item"
+        app:layout_constraintTop_toTopOf="@id/inputBox"
+        app:layout_constraintBottom_toBottomOf="@id/inputBox"
+        app:layout_constraintStart_toEndOf="@id/inputBox"
+        app:layout_constraintEnd_toStartOf="@id/addButton"
+        android:layout_marginEnd="8dp" />
 
     <!-- Add Button -->
     <Button
@@ -51,7 +68,7 @@
         android:contentDescription="Button to add an item"
         app:layout_constraintTop_toTopOf="@id/inputBox"
         app:layout_constraintBottom_toBottomOf="@id/inputBox"
-        app:layout_constraintStart_toEndOf="@id/inputBox"
+        app:layout_constraintStart_toEndOf="@id/inputPrice"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Scrollable Task List -->
@@ -59,7 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/inputBox"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/totalPrice"
         android:layout_marginTop="16dp"
         android:importantForAccessibility="yes"
         android:contentDescription="Scrollable list of tasks">
@@ -70,5 +87,23 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" />
     </ScrollView>
+
+    <!-- Total Price Display -->
+    <TextView
+        android:id="@+id/totalPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total: ৳0.00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:gravity="end"
+        android:padding="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/white"
+        android:textColor="@android:color/holo_blue_dark"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

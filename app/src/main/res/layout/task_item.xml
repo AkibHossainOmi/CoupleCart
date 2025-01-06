@@ -24,15 +24,19 @@
         android:layout_weight="1"
         android:layout_marginEnd="8dp" />
 
-    <!-- Price EditText -->
+    <!-- Price EditText (Editable) -->
     <EditText
         android:id="@+id/taskPrice"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:hint="Price"
         android:inputType="numberDecimal"
-        android:layout_marginEnd="8dp"
-        android:gravity="end|center_vertical" />
+        android:text="0.00"
+        android:textSize="14sp"
+        android:gravity="end"
+        android:paddingEnd="8dp"
+        android:importantForAccessibility="yes"
+        android:contentDescription="Task price"
+        android:layout_marginEnd="16dp" />
 
     <!-- Remove Button -->
     <Button
