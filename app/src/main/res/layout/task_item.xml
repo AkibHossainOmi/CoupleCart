@@ -24,19 +24,26 @@
         android:layout_weight="1"
         android:layout_marginEnd="8dp" />
 
-    <!-- Price EditText (Editable) -->
-    <EditText
-        android:id="@+id/taskPrice"
-        android:layout_width="100dp"
+    <!-- Price Field with TextInputLayout -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/taskPriceInputLayout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:text="0.00"
-        android:textSize="14sp"
-        android:gravity="end"
-        android:paddingEnd="8dp"
-        android:importantForAccessibility="yes"
-        android:contentDescription="Task price"
-        android:layout_marginEnd="16dp" />
+        android:layout_marginEnd="16dp"
+        android:hint="Price">
+
+        <EditText
+            android:id="@+id/taskPrice"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:text="0.00"
+            android:textSize="14sp"
+            android:gravity="end"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Task price"
+            android:paddingEnd="8dp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Remove Button -->
     <Button
