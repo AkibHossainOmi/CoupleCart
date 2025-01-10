@@ -1,5 +1,8 @@
 package com.example.shoppinglistapp.presentation.ui.main;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,12 +14,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import android.Manifest;
 
 import com.example.shoppinglistapp.R;
 import com.example.shoppinglistapp.data.remote.FirebaseTaskService;
 import com.example.shoppinglistapp.data.repository.TaskRepository;
 import com.example.shoppinglistapp.domain.model.TaskModel;
 import com.example.shoppinglistapp.domain.usecase.TaskUseCase;
+import com.example.shoppinglistapp.presentation.utils.ForegroundService;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +41,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+            }
+        }
+        Intent serviceIntent = new Intent(this, ForegroundService.class);
+        startService(serviceIntent);
 //        Backendless.initApp(this,"6140E01A-F403-4560-A400-BC2AECADA0B9", "53160DC3-9478-4048-96E9-F85EECCCA77A");
 //        FirebaseMessaging.getInstance().getToken()
 //                .addOnCompleteListener(task -> {
@@ -83,7 +97,20 @@ public class MainActivity extends AppCompatActivity {
         // Listen for changes in the Firebase database
         listenForTaskUpdates();
     }
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, you can start the service
+                Intent serviceIntent = new Intent(this, ForegroundService.class);
+                startService(serviceIntent);
+            } else {
+                // Permission denied, show a message or handle accordingly
+                Toast.makeText(this, "Permission denied, cannot start service", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
     private void listenForTaskUpdates() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference tasksRef = database.getReference("tasks");
