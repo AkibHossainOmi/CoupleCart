@@ -7,6 +7,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.ServiceInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.IBinder;
 import android.app.Service;
@@ -35,12 +37,13 @@ public class ForegroundService extends Service {
 
         // Update PendingIntent to use FLAG_IMMUTABLE
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_logo);
         // Build the notification with the PendingIntent
         Notification notification = new NotificationCompat.Builder(this, channelId)
                 .setContentTitle("CoupleCart is running")
                 .setContentText("Tap to return to the app.")
-                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setSmallIcon(R.drawable.ic_logo)
+                .setLargeIcon(largeIcon)
                 .setContentIntent(pendingIntent)  // Set the PendingIntent
                 .setAutoCancel(true)  // Close the notification when clicked
                 .build();
