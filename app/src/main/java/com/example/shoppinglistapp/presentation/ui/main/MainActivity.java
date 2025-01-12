@@ -48,20 +48,6 @@ public class MainActivity extends AppCompatActivity {
         }
         Intent serviceIntent = new Intent(this, ForegroundService.class);
         startService(serviceIntent);
-//        Backendless.initApp(this,"6140E01A-F403-4560-A400-BC2AECADA0B9", "53160DC3-9478-4048-96E9-F85EECCCA77A");
-//        FirebaseMessaging.getInstance().getToken()
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        // Get the Firebase token
-//                        String token = task.getResult();
-//
-//                        // Now register the device with Backendless
-//                        Backendless.Messaging.registerDevice();
-//                    } else {
-//                        // Handle failure to get Firebase token
-//                        Log.e("Firebase", "Failed to get token: " + task.getException().getMessage());
-//                    }
-//                });
 
         // Initialize the UseCase
         taskUseCase = new TaskUseCase(new TaskRepository(new FirebaseTaskService()));
@@ -81,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
                     double price = Double.parseDouble(priceText);
                     TaskModel taskModel = new TaskModel(taskText, price, false);  // Create TaskModel with "not checked" state
                     String taskId = taskUseCase.saveTask(taskModel);  // Save the task and get the task ID
-//                    taskUseCase.notifyNewTaskAdded(taskText);
                     inputBox.setText(""); // Clear input box
                     priceBox.setText(""); // Clear price box
 

@@ -37,12 +37,12 @@ public class ForegroundService extends Service {
 
         // Update PendingIntent to use FLAG_IMMUTABLE
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
-        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_logo);
+        Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_logo_large);
         // Build the notification with the PendingIntent
         Notification notification = new NotificationCompat.Builder(this, channelId)
                 .setContentTitle("CoupleCart is running")
                 .setContentText("Tap to return to the app.")
-                .setSmallIcon(R.drawable.ic_logo)
+                .setSmallIcon(R.drawable.ic_logo_large)
                 .setLargeIcon(largeIcon)
                 .setContentIntent(pendingIntent)  // Set the PendingIntent
                 .setAutoCancel(true)  // Close the notification when clicked
