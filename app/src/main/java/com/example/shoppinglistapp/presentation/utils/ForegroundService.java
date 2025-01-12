@@ -42,7 +42,7 @@ public class ForegroundService extends Service {
         Notification notification = new NotificationCompat.Builder(this, channelId)
                 .setContentTitle("CoupleCart is running")
                 .setContentText("Tap to return to the app.")
-                .setSmallIcon(R.drawable.ic_logo_large)
+                .setSmallIcon(R.drawable.ic_logo_small)
                 .setLargeIcon(largeIcon)
                 .setContentIntent(pendingIntent)  // Set the PendingIntent
                 .setAutoCancel(true)  // Close the notification when clicked
