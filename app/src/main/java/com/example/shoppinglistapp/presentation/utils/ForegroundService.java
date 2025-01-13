@@ -45,7 +45,8 @@ public class ForegroundService extends Service {
                 .setSmallIcon(R.drawable.ic_logo_small)
                 .setLargeIcon(largeIcon)
                 .setContentIntent(pendingIntent)  // Set the PendingIntent
-                .setAutoCancel(true)  // Close the notification when clicked
+                .setAutoCancel(false)  // Close the notification when clicked
+                .setShowWhen(false)
                 .build();
 
         // Start the service in the foreground, specifying the service type (for Android 12+)
