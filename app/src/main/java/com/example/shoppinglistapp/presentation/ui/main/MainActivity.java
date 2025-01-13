@@ -1,9 +1,20 @@
 package com.example.shoppinglistapp.presentation.ui.main;
 
+import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
 
@@ -67,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     double price = Double.parseDouble(priceText);
                     TaskModel taskModel = new TaskModel(taskText, price, false);  // Create TaskModel with "not checked" state
                     String taskId = taskUseCase.saveTask(taskModel);  // Save the task and get the task ID
+                    saveLocalTaskId(taskId);
                     inputBox.setText(""); // Clear input box
                     priceBox.setText(""); // Clear price box
 
@@ -96,6 +109,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    private void saveLocalTaskId(String taskId) {
+        SharedPreferences sharedPreferences = getSharedPreferences("ShoppingListPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("last_added_task", taskId); // Save the last added task ID
+        editor.apply();
+    }
+
+    private String getLocalTaskId() {
+        SharedPreferences sharedPreferences = getSharedPreferences("ShoppingListPrefs", MODE_PRIVATE);
+        return sharedPreferences.getString("last_added_task", null); // Return null if no value is found
+    }
+
+
     private void listenForTaskUpdates() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference tasksRef = database.getReference("tasks");
@@ -105,6 +131,12 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 taskList.removeAllViews(); // Clear the list before adding updated tasks
                 totalPrice = 0.0; // Reset total price
+
+                int currentItemCount = 0; // To track current number of items
+                boolean newItemAdded = false; // Flag to track if a new item was added
+
+                // Retrieve the last added task ID saved locally
+                String lastAddedTaskId = getLocalTaskId();
 
                 // Loop through the tasks in the database
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -117,8 +149,25 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isCompleted()) {
                             totalPrice += task.getPrice();
                         }
+
+                        currentItemCount++; // Increment the count
+
+                        // Check if this task ID is different from the last added task ID
+                        if (lastAddedTaskId != null && snapshot.getKey().equals(lastAddedTaskId)) {
+                            newItemAdded = true; // Mark that the task was added locally
+                        }
                     }
                 }
+
+                // Compare current item count with saved item count
+                int savedItemCount = getSavedItemCount();
+                if (!newItemAdded && currentItemCount > savedItemCount) {
+                    // Show notification if new items have been added by another device
+                    showNotification("New item(s) have been added!");
+                }
+
+                // Save the new item count in SharedPreferences
+                saveItemCount(currentItemCount);
 
                 // Update the total price
                 updateTotalPrice();
@@ -129,6 +178,63 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("Firebase", "Failed to read value.", error.toException());
             }
         });
+    }
+
+
+    private void saveItemCount(int count) {
+        SharedPreferences sharedPreferences = getSharedPreferences("ShoppingListPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("item_count", count); // Save the count in SharedPreferences
+        editor.apply();
+    }
+    private int getSavedItemCount() {
+        SharedPreferences sharedPreferences = getSharedPreferences("ShoppingListPrefs", MODE_PRIVATE);
+        return sharedPreferences.getInt("item_count", 0); // Default to 0 if no value is found
+    }
+
+    private void showNotification(String message) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create NotificationChannel
+            NotificationChannel channel = new NotificationChannel("new_item_channel",
+                    "CoupleCart",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+
+            // Create AudioAttributes for notification sound
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+
+            // Set the notification sound and lock screen visibility
+            channel.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION), audioAttributes);
+            channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC); // Show on lock screen
+
+            // Register the notification channel
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        // Intent for opening the MainActivity when the notification is clicked
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+
+        // PendingIntent to allow the notification to launch the app
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        // Build the notification
+        Notification notification = new NotificationCompat.Builder(this, "new_item_channel")
+                .setContentTitle("New Item Added!")
+                .setContentText(message)
+                .setSmallIcon(R.drawable.ic_logo_small) // Your notification icon
+                .setPriority(NotificationCompat.PRIORITY_HIGH) // Ensure high priority for visibility
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)  // Automatically remove the notification on click
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)  // Show on the lock screen
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))  // Set sound
+                .build();
+
+        // Notify the user with the notification
+        notificationManager.notify(0, notification);
     }
 
     private void addTaskToList(final String taskId, final String taskText, double taskPrice, boolean isChecked) {
