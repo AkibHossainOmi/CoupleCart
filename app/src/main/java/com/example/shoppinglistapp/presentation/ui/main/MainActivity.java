@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 int savedItemCount = getSavedItemCount();
                 if (!newItemAdded && currentItemCount > savedItemCount) {
                     // Show notification if new items have been added by another device
-                    showNotification("New item(s) have been added!");
+                    showNotification("Tap to see the items.");
                 }
 
                 // Save the new item count in SharedPreferences
@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Build the notification
         Notification notification = new NotificationCompat.Builder(this, "new_item_channel")
-                .setContentTitle("New Item Added!")
+                .setContentTitle("Got New Item!")
                 .setContentText(message)
                 .setSmallIcon(R.drawable.ic_logo_small) // Your notification icon
                 .setPriority(NotificationCompat.PRIORITY_HIGH) // Ensure high priority for visibility
