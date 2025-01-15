@@ -1,5 +1,6 @@
 package com.example.shoppinglistapp.presentation.ui.main;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -69,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         Intent serviceIntent = new Intent(this, ForegroundService.class);
-        startService(serviceIntent);
+        if (!isServiceRunning(ForegroundService.class)) {
+            startService(serviceIntent);
+        }
 
         // Initialize the UseCase
         taskUseCase = new TaskUseCase(new TaskRepository(new FirebaseTaskService()));
@@ -105,6 +108,19 @@ public class MainActivity extends AppCompatActivity {
         // Listen for changes in the Firebase database
         listenForTaskUpdates();
     }
+
+    public boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (activityManager != null) {
+            for (ActivityManager.RunningServiceInfo service : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+                if (serviceClass.getName().equals(service.service.getClassName())) {
+                    return true; // Service is already running
+                }
+            }
+        }
+        return false; // Service is not running
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
