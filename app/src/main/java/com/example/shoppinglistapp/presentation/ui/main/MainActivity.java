@@ -1,6 +1,5 @@
 package com.example.shoppinglistapp.presentation.ui.main;
 
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -10,11 +9,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +50,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean isPersistenceEnabled = prefs.getBoolean("persistence_enabled", false);
+
+        if (!isPersistenceEnabled) {
+            // Enable Firebase persistence only if it has not been done before
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+            // Set the flag in SharedPreferences to remember that persistence has been enabled
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("persistence_enabled", true);
+            editor.apply();
+        }
         setContentView(R.layout.activity_main);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
