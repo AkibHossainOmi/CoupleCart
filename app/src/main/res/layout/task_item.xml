@@ -12,17 +12,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <!-- Task Text -->
-    <TextView
-        android:id="@+id/taskText"
+    <!-- Task Name with TextInputLayout -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/taskNameInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Sample Task"
-        android:textSize="16sp"
-        android:layout_marginStart="8dp"
-        android:gravity="start|center_vertical"
         android:layout_weight="1"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:hint="Item">
+
+        <EditText
+            android:id="@+id/taskName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sample Task"
+            android:textSize="16sp"
+            android:importantForAccessibility="yes"
+            android:contentDescription="Task name"
+            android:gravity="start|center_vertical" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Price Field with TextInputLayout -->
     <com.google.android.material.textfield.TextInputLayout

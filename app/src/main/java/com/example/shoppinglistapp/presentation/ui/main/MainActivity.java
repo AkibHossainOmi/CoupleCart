@@ -263,15 +263,30 @@ public class MainActivity extends AppCompatActivity {
         notificationManager.notify(0, notification);
     }
 
-    private void addTaskToList(final String taskId, final String taskText, double taskPrice, boolean isChecked) {
+    private void addTaskToList(final String taskId, String taskText, double taskPrice, boolean isChecked) {
         // Inflate the task item layout
         LayoutInflater inflater = LayoutInflater.from(this);
         View taskView = inflater.inflate(R.layout.task_item, taskList, false);
 
-        // Set the task name and price
-        TextView taskTextView = taskView.findViewById(R.id.taskText);
-        taskTextView.setText(taskText);
+        // Set up the task name EditText
+        EditText taskNameView = taskView.findViewById(R.id.taskName);
+        taskNameView.setText(taskText);
 
+        // Listen for changes in the task name
+        taskNameView.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                // When focus is lost, save the updated name to Firebase
+                String newTaskName = taskNameView.getText().toString().trim();
+                if (!newTaskName.isEmpty()) {
+                    updateTaskName(taskId, newTaskName);
+                } else {
+                    Toast.makeText(MainActivity.this, "Task name cannot be empty!", Toast.LENGTH_SHORT).show();
+                    taskNameView.setText(taskText); // Revert to the original name if empty
+                }
+            }
+        });
+
+        // Set up the task price EditText
         EditText taskPriceView = taskView.findViewById(R.id.taskPrice);
         taskPriceView.setText(String.valueOf(taskPrice));
 
@@ -284,6 +299,7 @@ public class MainActivity extends AppCompatActivity {
                     updateTaskPrice(taskId, newPrice);
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "Invalid price entered!", Toast.LENGTH_SHORT).show();
+                    taskPriceView.setText(String.valueOf(taskPrice)); // Revert to the original price if invalid
                 }
             }
         });
@@ -291,8 +307,8 @@ public class MainActivity extends AppCompatActivity {
         // Set up the Remove Button functionality
         Button removeButton = taskView.findViewById(R.id.removeButton);
         removeButton.setOnClickListener(v -> {
-            deleteTask(taskId);  // Delete the task from Firebase
-            taskList.removeView(taskView);  // Remove the task view from the list
+            deleteTask(taskId); // Delete the task from Firebase
+            taskList.removeView(taskView); // Remove the task view from the list
         });
 
         // Set up the checkbox for marking the task
@@ -302,18 +318,19 @@ public class MainActivity extends AppCompatActivity {
         // Only update the total price when the checkbox is toggled
         taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked1) -> {
             if (isChecked1) {
-                totalPrice += taskPrice;  // Add task's price to the total when marked
-                updateTaskCheckedState(taskId, true);  // Update the task's checked state in Firebase
+                totalPrice += taskPrice; // Add task's price to the total when marked
+                updateTaskCheckedState(taskId, true); // Update the task's checked state in Firebase
             } else {
-                totalPrice -= taskPrice;  // Subtract task's price from the total when unmarked
-                updateTaskCheckedState(taskId, false);  // Update the task's checked state in Firebase
+                totalPrice -= taskPrice; // Subtract task's price from the total when unmarked
+                updateTaskCheckedState(taskId, false); // Update the task's checked state in Firebase
             }
-            updateTotalPrice();  // Update the total price
+            updateTotalPrice(); // Update the total price
         });
 
         // Add the inflated task view to the task list
         taskList.addView(taskView);
     }
+
 
     private void updateTotalPrice() {
         totalPriceText.setText("Total: ৳" + totalPrice);
@@ -352,6 +369,19 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         // Handle failure to update
                         Toast.makeText(MainActivity.this, "Failed to update price", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+    private void updateTaskName(String taskId, String newName) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference taskRef = database.getReference("tasks").child(taskId);
+
+        taskRef.child("name").setValue(newName) // Update the name in Firebase
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(MainActivity.this, "Task name updated!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Failed to update task name", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
