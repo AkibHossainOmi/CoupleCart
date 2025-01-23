@@ -1,5 +1,6 @@
 package com.example.shoppinglistapp.presentation.ui.main;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.os.Build;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -268,60 +271,76 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         View taskView = inflater.inflate(R.layout.task_item, taskList, false);
 
-        // Set up the task name EditText
-        EditText taskNameView = taskView.findViewById(R.id.taskName);
+        // Reference UI elements
+        final EditText taskNameView = taskView.findViewById(R.id.taskName);
+        final EditText taskPriceView = taskView.findViewById(R.id.taskPrice);
+        final ImageButton editButton = taskView.findViewById(R.id.editButton); // ImageButton for editing
+        final Button removeButton = taskView.findViewById(R.id.removeButton);
+        final Button saveButton = taskView.findViewById(R.id.saveButton); // Save Button
+        final CheckBox taskCheckBox = taskView.findViewById(R.id.taskCheckBox);
+
+        // Initialize UI elements with task data
         taskNameView.setText(taskText);
-
-        // Listen for changes in the task name
-        taskNameView.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                // When focus is lost, save the updated name to Firebase
-                String newTaskName = taskNameView.getText().toString().trim();
-                if (!newTaskName.isEmpty()) {
-                    updateTaskName(taskId, newTaskName);
-                } else {
-                    Toast.makeText(MainActivity.this, "Task name cannot be empty!", Toast.LENGTH_SHORT).show();
-                    taskNameView.setText(taskText); // Revert to the original name if empty
-                }
-            }
-        });
-
-        // Set up the task price EditText
-        EditText taskPriceView = taskView.findViewById(R.id.taskPrice);
         taskPriceView.setText(String.valueOf(taskPrice));
+        taskCheckBox.setChecked(isChecked);
+        taskNameView.setEnabled(false);
+        taskPriceView.setEnabled(false);
+        saveButton.setVisibility(View.GONE); // Initially hide the Save button
 
-        // Listen for changes in the price
-        taskPriceView.setOnFocusChangeListener((v, hasFocus) -> {
-            if (!hasFocus) {
-                // When focus is lost, save the updated price to Firebase
-                try {
-                    double newPrice = Double.parseDouble(taskPriceView.getText().toString().trim());
-                    updateTaskPrice(taskId, newPrice);
-                } catch (NumberFormatException e) {
-                    Toast.makeText(MainActivity.this, "Invalid price entered!", Toast.LENGTH_SHORT).show();
-                    taskPriceView.setText(String.valueOf(taskPrice)); // Revert to the original price if invalid
-                }
+        // Handle "Edit" button click
+        editButton.setOnClickListener(v -> {
+            if (!taskNameView.isEnabled()) {
+                // Enable editing mode
+                toggleEditingMode(taskNameView, taskPriceView, true);
+
+                // Hide the Edit and Remove buttons, show the Save button
+                editButton.setVisibility(View.GONE); // Hide Edit button
+                removeButton.setVisibility(View.GONE); // Hide Remove button
+                saveButton.setVisibility(View.VISIBLE); // Show Save button
             }
         });
 
-        // Set up the Remove Button functionality
-        Button removeButton = taskView.findViewById(R.id.removeButton);
+        // Handle "Save" button click
+        saveButton.setOnClickListener(v -> {
+            // Save the changes
+            String updatedName = taskNameView.getText().toString().trim();
+            String updatedPriceText = taskPriceView.getText().toString().trim();
+
+            if (updatedName.isEmpty() || updatedPriceText.isEmpty()) {
+                Toast.makeText(MainActivity.this, "Please fill both name and price!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                double updatedPrice = Double.parseDouble(updatedPriceText);
+                updateTaskNameAndPrice(taskId, updatedName, updatedPrice);
+
+                // After saving, hide the Save button, and re-enable remove button and checkbox
+                toggleEditingMode(taskNameView, taskPriceView, false);
+                removeButton.setVisibility(View.VISIBLE); // Show the remove button again
+                taskCheckBox.setEnabled(true); // Enable the checkbox again
+
+                // Hide the Save button
+                saveButton.setVisibility(View.GONE);
+                editButton.setVisibility(View.VISIBLE); // Show the edit button again
+            } catch (NumberFormatException e) {
+                Toast.makeText(MainActivity.this, "Invalid price entered!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Handle "Remove" button click
         removeButton.setOnClickListener(v -> {
             deleteTask(taskId); // Delete the task from Firebase
             taskList.removeView(taskView); // Remove the task view from the list
         });
 
-        // Set up the checkbox for marking the task
-        CheckBox taskCheckBox = taskView.findViewById(R.id.taskCheckBox);
-        taskCheckBox.setChecked(isChecked);
-
-        // Only update the total price when the checkbox is toggled
+        // Handle checkbox functionality
         taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked1) -> {
             if (isChecked1) {
-                totalPrice += taskPrice; // Add task's price to the total when marked
+                totalPrice += taskPrice; // Add task's price to the total when checked
                 updateTaskCheckedState(taskId, true); // Update the task's checked state in Firebase
             } else {
-                totalPrice -= taskPrice; // Subtract task's price from the total when unmarked
+                totalPrice -= taskPrice; // Subtract task's price from the total when unchecked
                 updateTaskCheckedState(taskId, false); // Update the task's checked state in Firebase
             }
             updateTotalPrice(); // Update the total price
@@ -330,6 +349,31 @@ public class MainActivity extends AppCompatActivity {
         // Add the inflated task view to the task list
         taskList.addView(taskView);
     }
+
+    private void toggleEditingMode(EditText taskNameView, EditText taskPriceView, boolean enable) {
+        taskNameView.setEnabled(enable);
+        taskPriceView.setEnabled(enable);
+    }
+
+
+
+
+    private void updateTaskNameAndPrice(String taskId, String newName, double newPrice) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference taskRef = database.getReference("tasks").child(taskId);
+
+        // Update both name and price in Firebase
+        taskRef.child("name").setValue(newName);
+        taskRef.child("price").setValue(newPrice)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(MainActivity.this, "Task updated!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Failed to update task", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
 
 
     private void updateTotalPrice() {
