@@ -10,7 +10,8 @@
     <CheckBox
         android:id="@+id/taskCheckBox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp" />
 
     <!-- Task Name with TextInputLayout -->
     <com.google.android.material.textfield.TextInputLayout
@@ -18,8 +19,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
         android:hint="Item">
 
         <EditText
@@ -27,11 +28,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Sample Task"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:importantForAccessibility="yes"
             android:contentDescription="Task name"
             android:gravity="start|center_vertical"
-            android:enabled="false" /> <!-- Initially disable the EditText -->
+            android:enabled="false"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Price Field with TextInputLayout -->
@@ -39,7 +42,7 @@
         android:id="@+id/taskPriceInputLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
         android:hint="Price">
 
         <EditText
@@ -53,15 +56,18 @@
             android:importantForAccessibility="yes"
             android:contentDescription="Task price"
             android:paddingEnd="8dp"
-            android:enabled="false" /> <!-- Initially disable the EditText -->
+            android:enabled="false"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Edit/Save Button -->
     <ImageButton
         android:id="@+id/editButton"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:background="?android:attr/selectableItemBackground"
         android:contentDescription="Edit task"
         android:scaleType="fitCenter"
@@ -70,7 +76,7 @@
         android:text=""
         android:textSize="14sp" />
 
-
+    <!-- Save Button (hidden initially) -->
     <Button
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"
@@ -78,15 +84,6 @@
         android:text="Save"
         android:layout_marginStart="8dp"
         android:visibility="gone" />
-
-    <!-- Cancel Button (hidden initially) -->
-    <Button
-        android:id="@+id/cancelButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:layout_marginStart="8dp"
-        android:visibility="gone" /> <!-- Initially hidden -->
 
     <!-- Remove Button -->
     <Button
