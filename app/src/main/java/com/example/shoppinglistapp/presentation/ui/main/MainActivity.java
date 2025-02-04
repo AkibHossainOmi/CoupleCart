@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create NotificationChannel
             NotificationChannel channel = new NotificationChannel("new_item_channel",
-                    "CoupleCart",
+                    "FamilyCart",
                     NotificationManager.IMPORTANCE_DEFAULT);
 
             // Create AudioAttributes for notification sound

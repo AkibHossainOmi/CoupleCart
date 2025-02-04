@@ -40,7 +40,7 @@ public class ForegroundService extends Service {
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_logo_large);
         // Build the notification with the PendingIntent
         Notification notification = new NotificationCompat.Builder(this, channelId)
-                .setContentTitle("CoupleCart is running")
+                .setContentTitle("FamilyCart is running")
                 .setContentText("Tap to return to the app.")
                 .setSmallIcon(R.drawable.ic_logo_small)
                 .setLargeIcon(largeIcon)

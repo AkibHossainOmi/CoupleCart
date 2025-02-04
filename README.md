@@ -1,6 +1,6 @@
-# CoupleCart
+# FamilyCart
 
-CoupleCart is a user-friendly Android app designed to simplify shopping for couples and families. It allows users to collaboratively manage shopping lists, track expenses, and stay within their monthly budget.
+FamilyCart is a user-friendly Android app designed to simplify shopping for couples and families. It allows users to collaboratively manage shopping lists, track expenses, and stay within their monthly budget.
 
 ## Features
 
@@ -11,13 +11,13 @@ CoupleCart is a user-friendly Android app designed to simplify shopping for coup
 
 ## Firebase Integration
 
-CoupleCart uses Firebase as its database. This allows each couple to use the app personally by configuring their own Firebase project. Your data remains private and accessible only to you and your partner.
+FamilyCart uses Firebase as its database. This allows each couple to use the app personally by configuring their own Firebase project. Your data remains private and accessible only to you and your partner.
 
 ## Installation
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/AkibHossainOmi/couplecart.git
+   git clone https://github.com/AkibHossainOmi/familycart.git
    ```
 2. **Configure Firebase**
    - Create a Firebase project in the [Firebase Console](https://console.firebase.google.com/).
@@ -60,5 +60,5 @@ If you have any feedback, suggestions, or issues, feel free to open an issue on 
 
 ---
 
-Happy Shopping with CoupleCart!
+Happy Shopping with FamilyCart!
 
