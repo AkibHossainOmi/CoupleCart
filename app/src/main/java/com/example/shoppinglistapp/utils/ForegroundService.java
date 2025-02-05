@@ -1,4 +1,4 @@
-package com.example.shoppinglistapp.presentation.utils;
+package com.example.shoppinglistapp.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -15,48 +15,51 @@ import android.app.Service;
 
 import androidx.core.app.NotificationCompat;
 
+import com.example.shoppinglistapp.MainActivity;
 import com.example.shoppinglistapp.R;
-import com.example.shoppinglistapp.presentation.ui.main.MainActivity;
 
 public class ForegroundService extends Service {
 
     @SuppressLint("ForegroundServiceType")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        // Create a notification channel (needed for Android 8.0 and above)
-        String channelId = "default_channel";
+        createNotificationChannel();
+
+        showNotification(startId);
+
+        return START_STICKY;
+    }
+
+    private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId,
-                    "Foreground Service Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel(
+                    "default_channel", "Foreground Service Channel", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
+    }
 
-        // Create an explicit intent for your MainActivity
+    private void showNotification(int startId) {
         Intent notificationIntent = new Intent(this, MainActivity.class);
-
-        // Update PendingIntent to use FLAG_IMMUTABLE
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
         Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_logo_large);
-        // Build the notification with the PendingIntent
-        Notification notification = new NotificationCompat.Builder(this, channelId)
+
+        Notification notification = new NotificationCompat.Builder(this, "default_channel")
                 .setContentTitle("FamilyCart is running")
                 .setContentText("Tap to return to the app.")
                 .setSmallIcon(R.drawable.ic_logo_small)
                 .setLargeIcon(largeIcon)
-                .setContentIntent(pendingIntent)  // Set the PendingIntent
-                .setAutoCancel(false)  // Close the notification when clicked
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(false)
                 .setShowWhen(false)
                 .build();
 
-        // Start the service in the foreground, specifying the service type (for Android 12+)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(startId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
         } else {
             startForeground(startId, notification);
         }
-
-        return START_STICKY;  // Keep the service running
     }
 
     @Override
