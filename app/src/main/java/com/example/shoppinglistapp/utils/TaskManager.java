@@ -27,13 +27,13 @@ public class TaskManager {
     private final List<Task> taskList;
     SharedPreferencesHelper sharedPreferencesHelper;
 
-
     public TaskManager(Context context) {
         this.context = context;
         taskList = new ArrayList<>();
+        sharedPreferencesHelper = new SharedPreferencesHelper(context);
     }
 
-    public void listenForTaskUpdates(LinearLayout taskListLayout, TextView totalPrice) {
+    public void listenForTaskUpdates(LinearLayout taskListLayout, TextView totalPrice, String selectedMonthYear) {
         FirebaseHelper.getTaskReference().addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -45,16 +45,18 @@ public class TaskManager {
                     Task task = snapshot.getValue(Task.class);
                     assert task != null;
                     task.setId(snapshot.getKey());
-                    taskList.add(task);
-                    item_count++;
 
-                    // Use TaskAdapter to display the task view
-                    taskListLayout.addView(TaskAdapter.createTaskView(task, taskListLayout, TaskManager.this));
+                    // Only show tasks that match the selected monthYear
+                    if (selectedMonthYear.equals(task.getMonthYear()) || selectedMonthYear.isEmpty()) {
+                        taskList.add(task);
+                        item_count++;
+
+                        // Use TaskAdapter to display the task view
+                        taskListLayout.addView(TaskAdapter.createTaskView(task, taskListLayout, TaskManager.this));
+                    }
                 }
 
-                sharedPreferencesHelper = new SharedPreferencesHelper(context);
-                if(item_count > sharedPreferencesHelper.getItemCount())
-                {
+                if (item_count > sharedPreferencesHelper.getItemCount()) {
                     NotificationHelper.showNotification(context, "Tap to see the items.");
                 }
                 sharedPreferencesHelper.storeItemCount(item_count);
@@ -68,14 +70,11 @@ public class TaskManager {
         });
     }
 
-    public void addNewTask(String name, String price) {
-        Task task = new Task("", name, Double.parseDouble(price), false);
+    public void addNewTask(String name, String price, String selectedMonthYear) {
+        Task task = new Task("", name, Double.parseDouble(price), false, selectedMonthYear);
         FirebaseHelper.addTask(task);
         int item_count = sharedPreferencesHelper.getItemCount();
         sharedPreferencesHelper.storeItemCount(item_count + 1);
-        if (context instanceof MainActivity) {
-            ((MainActivity) context).clearInputs();
-        }
     }
 
     public void updateTask(Task task) {

@@ -8,6 +8,28 @@
     android:padding="16dp"
     tools:context=".MainActivity">
 
+    <LinearLayout
+        android:id="@+id/monthHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/outer_border"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Spinner
+            android:id="@+id/monthYearSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:importantForAccessibility="yes"
+            android:contentDescription="@string/month_year_spinner"/>
+    </LinearLayout>
+
+
     <!-- Title -->
     <TextView
         android:id="@+id/titleText"
@@ -20,6 +42,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="24dp"
+        android:layout_marginTop="60dp"
         android:gravity="center" />
 
     <!-- Input Field -->
@@ -27,45 +50,52 @@
         android:id="@+id/inputBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Item"
-        android:padding="12dp"
-        android:background="@android:drawable/edit_text"
-        android:importantForAccessibility="yes"
-        android:contentDescription="Input box for adding a new task"
-        app:layout_constraintTop_toBottomOf="@id/titleText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/inputPrice"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp" />
+        android:autofillHints=""
+        android:background="@android:drawable/edit_text"
+        android:contentDescription="@string/input_box_for_adding_a_new_task"
+        android:hint="@string/item"
+        android:importantForAccessibility="yes"
+        android:inputType="text"
+        android:padding="12dp"
+        app:layout_constraintEnd_toStartOf="@id/inputPrice"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleText"
+        tools:ignore="ContentDescription" />
 
     <!-- Input Field for Price -->
+
+    <!-- Add Button -->
     <EditText
         android:id="@+id/inputPrice"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:hint="Price"
+        android:layout_marginEnd="8dp"
+        android:autofillHints=""
+        android:background="@android:drawable/edit_text"
+        android:contentDescription="@string/input_box_for_adding_the_price_of_an_item"
+        android:hint="@string/price"
+        android:importantForAccessibility="yes"
         android:inputType="numberDecimal"
         android:padding="12dp"
-        android:background="@android:drawable/edit_text"
-        android:importantForAccessibility="yes"
-        android:contentDescription="Input box for adding the price of an item"
-        app:layout_constraintTop_toTopOf="@id/inputBox"
         app:layout_constraintBottom_toBottomOf="@id/inputBox"
-        app:layout_constraintStart_toEndOf="@id/inputBox"
         app:layout_constraintEnd_toStartOf="@id/addButton"
-        android:layout_marginEnd="8dp" />
+        app:layout_constraintStart_toEndOf="@id/inputBox"
+        app:layout_constraintTop_toTopOf="@id/inputBox"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="ContentDescription" />
 
-    <!-- Add Button -->
     <Button
         android:id="@+id/addButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add"
+        android:text="@string/add"
         android:textColor="@android:color/white"
         android:layout_marginStart="8dp"
         android:backgroundTint="@android:color/holo_blue_dark"
         android:importantForAccessibility="yes"
-        android:contentDescription="Button to add an item"
+        android:contentDescription="@string/button_to_add_an_item"
         app:layout_constraintTop_toTopOf="@id/inputBox"
         app:layout_constraintBottom_toBottomOf="@id/inputBox"
         app:layout_constraintStart_toEndOf="@id/inputPrice"
@@ -79,7 +109,7 @@
         app:layout_constraintBottom_toTopOf="@id/totalPrice"
         android:layout_marginTop="16dp"
         android:importantForAccessibility="yes"
-        android:contentDescription="Scrollable list of tasks">
+        android:contentDescription="@string/scrollable_list_of_tasks">
 
         <LinearLayout
             android:id="@+id/taskList"
@@ -93,7 +123,7 @@
         android:id="@+id/totalPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Total: ৳0.00"
+        android:text="@string/total_0_00"
         android:textSize="18sp"
         android:textStyle="bold"
         android:gravity="end"

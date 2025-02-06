@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">FamilyCart</string>
+    <string name="item">Item</string>
+    <string name="input_box_for_adding_a_new_task">Input box for adding a new task</string>
+    <string name="price">Price</string>
+    <string name="input_box_for_adding_the_price_of_an_item">Input box for adding the price of an item</string>
+    <string name="add">Add</string>
+    <string name="button_to_add_an_item">Button to add an item</string>
+    <string name="scrollable_list_of_tasks">Scrollable list of tasks</string>
+    <string name="total_0_00">Total: ৳0.00</string>
+    <string name="month_year_spinner">month year dropdown</string>
+    <string name="sample_task">Sample Task</string>
+    <string name="task_name">Task name</string>
+    <string name="_0_00">0.00</string>
+    <string name="task_price">Task price</string>
+    <string name="edit_task">Edit task</string>
+    <string name="save">Save</string>
+    <string name="remove">Remove</string>
 </resources>

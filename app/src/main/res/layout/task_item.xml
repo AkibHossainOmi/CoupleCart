@@ -1,17 +1,15 @@
-<LinearLayout
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="10dp"
     android:gravity="center_vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Checkbox for marking task as completed -->
     <CheckBox
         android:id="@+id/taskCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp" />
+        android:layout_width="48dp"
+        android:layout_height="48dp"/>
 
     <!-- Task Name with TextInputLayout -->
     <com.google.android.material.textfield.TextInputLayout
@@ -21,20 +19,23 @@
         android:layout_weight="1"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
-        android:hint="Item">
+        android:hint="@string/item">
 
         <EditText
             android:id="@+id/taskName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sample Task"
+            android:autofillHints=""
+            android:inputType=""
+            android:text="@string/sample_task"
             android:textSize="14sp"
             android:importantForAccessibility="yes"
-            android:contentDescription="Task name"
             android:gravity="start|center_vertical"
             android:enabled="false"
             android:background="@android:color/transparent"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            tools:ignore="LabelFor"
+            android:minHeight="48dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Price Field with TextInputLayout -->
@@ -43,35 +44,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:hint="Price">
+        android:hint="@string/price">
 
         <EditText
             android:id="@+id/taskPrice"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
+            android:autofillHints=""
             android:inputType="numberDecimal"
-            android:text="0.00"
+            android:text="@string/_0_00"
             android:textSize="14sp"
-            android:gravity="end"
+            android:gravity="end|center_vertical"
             android:importantForAccessibility="yes"
-            android:contentDescription="Task price"
-            android:paddingEnd="8dp"
             android:enabled="false"
             android:background="@android:color/transparent"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            tools:ignore="LabelFor"
+            android:minHeight="48dp"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Edit/Save Button -->
     <ImageButton
         android:id="@+id/editButton"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="0dp"
         android:layout_marginEnd="8dp"
         android:background="?android:attr/selectableItemBackground"
-        android:contentDescription="Edit task"
+        android:contentDescription="@string/edit_task"
         android:scaleType="fitCenter"
-        android:padding="4dp"
+        android:padding="10dp"
         android:src="@drawable/ic_edit"
         android:text=""
         android:textSize="14sp" />
@@ -81,7 +83,7 @@
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="@string/save"
         android:layout_marginStart="8dp"
         android:visibility="gone" />
 
@@ -90,8 +92,7 @@
         android:id="@+id/removeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Remove"
-        android:layout_marginStart="8dp"
+        android:text="@string/remove"
         android:backgroundTint="@android:color/holo_red_dark"
         android:textColor="@android:color/white" />
 </LinearLayout>

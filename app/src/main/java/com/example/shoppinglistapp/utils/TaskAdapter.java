@@ -14,10 +14,13 @@ import com.example.shoppinglistapp.R;
 import com.example.shoppinglistapp.models.Task;
 
 public class TaskAdapter {
+
+    // Add monthYear as a parameter in the methods
     @SuppressLint("DefaultLocale")
     public static View createTaskView(Task task, LinearLayout taskListLayout, TaskManager taskManager) {
         @SuppressLint("InflateParams") View taskView = LayoutInflater.from(taskListLayout.getContext()).inflate(R.layout.task_item, null);
 
+        // Find views in the layout
         CheckBox taskCheckBox = taskView.findViewById(R.id.taskCheckBox);
         EditText taskName = taskView.findViewById(R.id.taskName);
         EditText taskPrice = taskView.findViewById(R.id.taskPrice);
