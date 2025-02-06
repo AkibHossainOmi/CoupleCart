@@ -56,10 +56,10 @@ public class TaskManager {
                     }
                 }
 
-                if (item_count > sharedPreferencesHelper.getItemCount()) {
+                if (item_count > sharedPreferencesHelper.getItemCountForSpecificMonth(selectedMonthYear)) {
                     NotificationHelper.showNotification(context, "Tap to see the items.");
                 }
-                sharedPreferencesHelper.storeItemCount(item_count);
+                sharedPreferencesHelper.storeItemCountForSpecificMonth(item_count, selectedMonthYear);
                 updateTotalPrice(totalPrice);
             }
 
@@ -73,8 +73,8 @@ public class TaskManager {
     public void addNewTask(String name, String price, String selectedMonthYear) {
         Task task = new Task("", name, Double.parseDouble(price), false, selectedMonthYear);
         FirebaseHelper.addTask(task);
-        int item_count = sharedPreferencesHelper.getItemCount();
-        sharedPreferencesHelper.storeItemCount(item_count + 1);
+        int item_count = sharedPreferencesHelper.getItemCountForSpecificMonth(selectedMonthYear);
+        sharedPreferencesHelper.storeItemCountForSpecificMonth(item_count + 1, selectedMonthYear);
     }
 
     public void updateTask(Task task) {

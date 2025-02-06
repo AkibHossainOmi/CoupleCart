@@ -2,11 +2,12 @@ package com.example.shoppinglistapp.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class SharedPreferencesHelper {
 
-    private static final String PREFS_NAME = "item";
-    private static final String ITEM_COUNT_KEY = "item_count";
+    private static final String PREFS_NAME = "shopping_list_prefs";
     private final SharedPreferences sharedPreferences;
     private final SharedPreferences.Editor editor;
 
@@ -15,12 +16,36 @@ public class SharedPreferencesHelper {
         editor = sharedPreferences.edit();
     }
 
-    public void storeItemCount(int itemCount) {
-        editor.putInt(ITEM_COUNT_KEY, itemCount);
+    // Method to store item count for the current month
+    public void storeItemCountForCurrentMonth(int itemCount) {
+        String currentMonthKey = getCurrentMonthKey();
+        editor.putInt(currentMonthKey, itemCount);
         editor.apply();
     }
 
-    public int getItemCount() {
-        return sharedPreferences.getInt(ITEM_COUNT_KEY, 0);
+    // Method to get item count for the current month
+    public int getItemCountForCurrentMonth() {
+        String currentMonthKey = getCurrentMonthKey();
+        return sharedPreferences.getInt(currentMonthKey, 0);
+    }
+
+    // Helper method to get the current month key in "yyyy-MM" format
+    private String getCurrentMonthKey() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM");
+        String currentMonth = dateFormat.format(Calendar.getInstance().getTime());
+        return "item_count_" + currentMonth;
+    }
+
+    // Optional: Method to store item count for a specific month
+    public void storeItemCountForSpecificMonth(int itemCount, String yearMonth) {
+        String key = "item_count_" + yearMonth;
+        editor.putInt(key, itemCount);
+        editor.apply();
+    }
+
+    // Optional: Method to get item count for a specific month
+    public int getItemCountForSpecificMonth(String yearMonth) {
+        String key = "item_count_" + yearMonth;
+        return sharedPreferences.getInt(key, 0);
     }
 }
